@@ -105,7 +105,7 @@ C_STD = gnu99
 # Write Configuration
 #=============================================================================#
 
-MOUNT = /Volumes/NODE_F746ZG/
+MOUNT = /Volumes/NODE_F217IG
 
 #=============================================================================#
 # set the VPATH according to SRCS_DIRS and startup file directory
