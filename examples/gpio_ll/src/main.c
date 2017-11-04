@@ -67,7 +67,7 @@ int main(void)
 {
   /* Configure the system clock to 120 MHz */
   SystemClock_Config();
-  
+
   /* -2- Configure IO in output push-pull mode to drive external LED */
   Configure_GPIO();
 
@@ -75,7 +75,7 @@ int main(void)
   while (1)
   {
     LL_GPIO_TogglePin(LED1_GPIO_PORT, LED1_PIN);
-    
+
     /* Insert delay 250 ms */
     LL_mDelay(250);
   }
