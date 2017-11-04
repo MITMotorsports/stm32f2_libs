@@ -52,13 +52,13 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /**
-  * @brief LED1 
+  * @brief LED1
   */
 
 #define LED1_PIN                           LL_GPIO_PIN_0
 #define LED1_GPIO_PORT                     GPIOB
 #define LED1_GPIO_CLK_ENABLE()             LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB)
-  
+
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
