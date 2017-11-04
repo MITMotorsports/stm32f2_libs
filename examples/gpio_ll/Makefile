@@ -34,7 +34,7 @@ PROJECT = template
 CORE = cortex-m3
 
 # device family
-FAMILY = STM32F207xx
+FAMILY = STM32F217xx
 
 CUBE_DIR = ../../stm32f2_cube
 
