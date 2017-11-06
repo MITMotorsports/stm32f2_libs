@@ -1,12 +1,11 @@
 /**
   ******************************************************************************
-  * @file    Examples_LL/GPIO/GPIO_InfiniteLedToggling/Src/main.c
+  * @file    GPIO/GPIO_IOToggle/Src/main.c 
   * @author  MCD Application Team
-  * @version V1.0.0
+  * @version V1.1.3
   * @date    17-March-2017
-  * @brief   This example describes how to configure and use GPIOs through
-  *          the STM32F2xx  GPIO LL API.
-  *          Peripheral initialization done using LL unitary services functions.
+  * @brief   This example describes how to configure and use GPIOs through 
+  *          the STM32F2xx HAL API.
   ******************************************************************************
   * @attention
   *
@@ -40,21 +39,23 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/** @addtogroup STM32F2xx_LL_Examples
+/** @addtogroup STM32F2xx_HAL_Examples
   * @{
   */
 
-/** @addtogroup GPIO_InfiniteLedToggling
+/** @addtogroup GPIO_IOToggle
   * @{
-  */
+  */ 
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+static GPIO_InitTypeDef  GPIO_InitStruct;
+
 /* Private function prototypes -----------------------------------------------*/
-void     SystemClock_Config(void);
-void     Configure_GPIO(void);
+static void SystemClock_Config(void);
+static void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -65,46 +66,64 @@ void     Configure_GPIO(void);
   */
 int main(void)
 {
+  /* STM32F2xx HAL library initialization:
+       - Configure the Flash prefetch, instruction and Data caches
+       - Configure the Systick to generate an interrupt each 1 msec
+       - Set NVIC Group Priority to 4
+       - Global MSP (MCU Support Package) initialization
+     */
+  HAL_Init();
+  
   /* Configure the system clock to 120 MHz */
   SystemClock_Config();
+  
+  /* -1- Enable GPIOG, GPIOC and GPIOI Clock (to be able to program the configuration registers) */
+  __HAL_RCC_GPIOG_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOI_CLK_ENABLE();
 
-  /* -2- Configure IO in output push-pull mode to drive external LED */
-  Configure_GPIO();
+  /* -2- Configure PG.6, PG.8, PI.9 and PC.7 IOs in output push-pull mode to
+         drive external LEDs */
+  GPIO_InitStruct.Pin = (GPIO_PIN_6 | GPIO_PIN_8);
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+  
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+  
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+  
+  HAL_GPIO_Init(GPIOI, &GPIO_InitStruct); 
+  
+  GPIO_InitStruct.Pin = GPIO_PIN_7;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+  
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct); 
 
-  /* Toggle IO in an infinite loop */
+  /* -3- Toggle PG.6, PG.8, PI.9 and PC.7 IOs in an infinite loop */  
   while (1)
   {
-    LL_GPIO_TogglePin(LED1_GPIO_PORT, LED1_PIN);
-
-    /* Insert delay 250 ms */
-    LL_mDelay(250);
+    HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_6);
+    /* Insert delay 100 ms */
+    HAL_Delay(100);
+    HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_8);
+    /* Insert delay 100 ms */
+    HAL_Delay(100);
+    HAL_GPIO_TogglePin(GPIOI, GPIO_PIN_9);
+    /* Insert delay 100 ms */
+    HAL_Delay(100);
+    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
+    /* Insert delay 100 ms */
+    HAL_Delay(100);
   }
 }
 
 /**
-  * @brief  This function configures GPIO
-  * @note   Peripheral configuration is minimal configuration from reset values.
-  *         Thus, some useless LL unitary functions calls below are provided as
-  *         commented examples - setting is default configuration from reset.
-  * @param  None
-  * @retval None
-  */
-void Configure_GPIO(void)
-{
-  /* Enable the LED1 Clock */
-  LED1_GPIO_CLK_ENABLE();
-
-  /* Configure IO in output push-pull mode to drive external LED1 */
-  LL_GPIO_SetPinMode(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_MODE_OUTPUT);
-  /* Reset value is LL_GPIO_OUTPUT_PUSHPULL */
-  //LL_GPIO_SetPinOutputType(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_OUTPUT_PUSHPULL);
-  /* Reset value is LL_GPIO_SPEED_FREQ_LOW */
-  //LL_GPIO_SetPinSpeed(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_SPEED_FREQ_LOW);
-  /* Reset value is LL_GPIO_PULL_NO */
-  //LL_GPIO_SetPinPull(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_PULL_NO);
-}
-
-/**           
   * @brief  System Clock Configuration
   *         The system Clock is configured as follow : 
   *            System Clock source            = PLL (HSE)
@@ -113,52 +132,62 @@ void Configure_GPIO(void)
   *            AHB Prescaler                  = 1
   *            APB1 Prescaler                 = 4
   *            APB2 Prescaler                 = 2
-  *            HSI Frequency(Hz)              = 80000000
-  *            PLL_M                          = 8
+  *            HSE Frequency(Hz)              = 25000000
+  *            PLL_M                          = 25
   *            PLL_N                          = 240
   *            PLL_P                          = 2
+  *            PLL_Q                          = 5
   *            VDD(V)                         = 3.3
-  *            Main regulator output voltage  = Scale1 mode
   *            Flash Latency(WS)              = 3
+  * @param  None
+  * @retval None
   */
-void SystemClock_Config(void)
+static void SystemClock_Config(void)
 {
-  /* Enable HSE oscillator */
-  LL_RCC_HSE_Enable();
-  while(LL_RCC_HSE_IsReady() != 1)
+  RCC_ClkInitTypeDef RCC_ClkInitStruct;
+  RCC_OscInitTypeDef RCC_OscInitStruct;
+
+  /* Enable HSE Oscillator and activate PLL with HSE as source */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 25;
+  RCC_OscInitStruct.PLL.PLLN = 240;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 5;
+  if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
-  };
-
-  /* Set FLASH latency */
-  LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
-
-  /* Main PLL configuration and activation */
-  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_25, 240, LL_RCC_PLLP_DIV_2);
-  LL_RCC_PLL_Enable();
-  while(LL_RCC_PLL_IsReady() != 1)
+    Error_Handler();
+  }
+  
+  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
+     clocks dividers */
+  RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+  if(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
-  };
+    Error_Handler();
+  }
+}
 
-  /* Sysclk activation on the main PLL */
-  LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
-  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
-  while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL)
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @param  None
+  * @retval None
+  */
+static void Error_Handler(void)
+{
+  /* User may add here some code to deal with this error */
+  while(1)
   {
-  };
-
-  /* Set APB1 & APB2 prescaler */
-  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_4);
-  LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_2);
-
-  /* Set systick to 1ms */
-  SysTick_Config(120000000 / 1000);
-
-  /* Update CMSIS variable (which can be updated also through SystemCoreClockUpdate function) */
-  SystemCoreClock = 120000000;
+  }
 }
 
 #ifdef  USE_FULL_ASSERT
-
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -166,10 +195,10 @@ void SystemClock_Config(void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t *file, uint32_t line)
-{
+void assert_failed(uint8_t* file, uint32_t line)
+{ 
   /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d", file, line) */
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
   /* Infinite loop */
   while (1)
@@ -180,10 +209,10 @@ void assert_failed(uint8_t *file, uint32_t line)
 
 /**
   * @}
-  */
+  */ 
 
 /**
   * @}
-  */
+  */ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
