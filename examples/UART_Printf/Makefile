@@ -34,12 +34,12 @@ PROJECT = template
 CORE = cortex-m3
 
 # device family
-FAMILY = STM32F217xx
+FAMILY = STM32F207xx
 
 CUBE_DIR = ../../stm32f2_cube
 
 # linker script
-LD_SCRIPT = linker/STM32F217IGHx_FLASH.ld
+LD_SCRIPT = linker/STM32F207IGHx_FLASH.ld
 
 # output folder (absolute or relative path, leave empty for in-tree compilation)
 OUT_DIR = bin
