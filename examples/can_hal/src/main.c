@@ -50,8 +50,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define KEY_PRESSED     0x00
-#define KEY_NOT_PRESSED 0x01
+#define KEY_PRESSED     0x01
+#define KEY_NOT_PRESSED 0x00
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -88,6 +88,11 @@ int main(void)
   BSP_LED_Init(LED1);
   BSP_LED_Init(LED2);
   BSP_LED_Init(LED3);
+
+  /* Initially turn LEDs off */
+  BSP_LED_Off(LED1);
+  BSP_LED_Off(LED2);
+  BSP_LED_Off(LED3);
   
   /* Configure Key Button */  
   BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_GPIO);
@@ -107,7 +112,7 @@ int main(void)
   {
     while(BSP_PB_GetState(BUTTON_KEY) == KEY_PRESSED)
     {
-      if(ubKeyNumber == 0x3) 
+      if(ubKeyNumber == 0x2) 
       {
         ubKeyNumber = 0x00;
       }
@@ -192,6 +197,7 @@ static void Error_Handler(void)
 {
   while(1)
   {
+      BSP_LED_On(LED3);
   }
 }
 
@@ -287,7 +293,6 @@ void LED_Display(uint8_t Ledstatus)
   /* Turn off all LEDs */
   BSP_LED_Off(LED1);
   BSP_LED_Off(LED2);
-  BSP_LED_Off(LED3);
   
   switch(Ledstatus)
   {
@@ -299,10 +304,6 @@ void LED_Display(uint8_t Ledstatus)
       BSP_LED_On(LED2);
       break;
  
-    case(3): 
-      BSP_LED_On(LED3);
-      break;
-
     default:
       break;
   }
