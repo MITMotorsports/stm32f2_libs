@@ -12,6 +12,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void     SystemClock_Config(void);
 void     Configure_GPIO(void);
+void     SysTick_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
 int main(void)
@@ -92,4 +93,13 @@ void SystemClock_Config(void)
 
   /* Update CMSIS variable (which can be updated also through SystemCoreClockUpdate function) */
   SystemCoreClock = 120000000;
+}
+
+/**
+  * @brief  This function handles SysTick Handler.
+  * @param  None
+  * @retval None
+  */
+void SysTick_Handler(void)
+{
 }
