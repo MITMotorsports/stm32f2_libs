@@ -3,10 +3,11 @@
 #include "stm32f2xx_ll_system.h"
 #include "stm32f2xx_ll_utils.h"
 #include "stm32f2xx_ll_gpio.h"
-#include "main.h"
 
 /* Private define ------------------------------------------------------------*/
-#define LED1_GPIO_CLK_ENABLE() LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOG)
+#define LED1_GPIO_CLK_ENABLE()  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOG)
+#define LED1_GPIO_PORT          GPIOG
+#define LED1_PIN                LL_GPIO_PIN_6
 
 /* Private function prototypes -----------------------------------------------*/
 void     SystemClock_Config(void);
