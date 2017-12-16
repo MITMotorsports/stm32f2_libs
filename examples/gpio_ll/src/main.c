@@ -1,4 +1,8 @@
+#include "stm32f2xx_ll_bus.h"
 #include "main.h"
+
+/* Private define ------------------------------------------------------------*/
+#define LED1_GPIO_CLK_ENABLE() LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOG)
 
 /* Private function prototypes -----------------------------------------------*/
 void     SystemClock_Config(void);
