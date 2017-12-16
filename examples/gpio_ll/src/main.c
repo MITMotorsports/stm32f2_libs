@@ -1,6 +1,7 @@
 #include "stm32f2xx_ll_bus.h"
 #include "stm32f2xx_ll_rcc.h"
 #include "stm32f2xx_ll_system.h"
+#include "stm32f2xx_ll_utils.h"
 #include "main.h"
 
 /* Private define ------------------------------------------------------------*/
