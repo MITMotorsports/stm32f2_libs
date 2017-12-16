@@ -40,7 +40,6 @@
 #define __MAIN_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f2xx_ll_rcc.h"
 #include "stm32f2xx_ll_system.h"
 #include "stm32f2xx_ll_utils.h"
 #include "stm32f2xx_ll_gpio.h"
