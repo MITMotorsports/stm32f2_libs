@@ -45,9 +45,6 @@
 #include "stm32f2xx_ll_system.h"
 #include "stm32f2xx_ll_utils.h"
 #include "stm32f2xx_ll_gpio.h"
-#if defined(USE_FULL_ASSERT)
-#include "stm32_assert.h"
-#endif /* USE_FULL_ASSERT */
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
