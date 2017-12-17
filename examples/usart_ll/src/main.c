@@ -1,14 +1,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/* Private typedef -----------------------------------------------------------*/
-
-/* Private define ------------------------------------------------------------*/
-
-/* Private macro -------------------------------------------------------------*/
-
-/* Private variables ---------------------------------------------------------*/
-
 /* Private function prototypes -----------------------------------------------*/
 void     SystemClock_Config(void);
 void     Configure_USART(void);
@@ -22,8 +14,6 @@ void     UserButton_Init(void);
 
 /**
   * @brief  Main program
-  * @param  None
-  * @retval None
   */
 int main(void)
 {
@@ -56,11 +46,6 @@ int main(void)
   *         -3- Enable the USART peripheral clock and clock source.
   *         -4- Configure USART functional parameters.
   *         -5- Enable USART.
-  * @note   Peripheral configuration is minimal configuration from reset values.
-  *         Thus, some useless LL unitary functions calls below are provided as
-  *         commented examples - setting is default configuration from reset.
-  * @param  None
-  * @retval None
   */
 void Configure_USART(void)
 {
@@ -85,9 +70,7 @@ void Configure_USART(void)
   LL_GPIO_SetPinPull(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_PULL_UP);
 
   /* (2) NVIC Configuration for USART interrupts */
-  /*  - Set priority for USARTx_IRQn */
-  /*  - Enable USARTx_IRQn */
-  NVIC_SetPriority(USARTx_IRQn, 0);  
+  NVIC_SetPriority(USARTx_IRQn, 0);
   NVIC_EnableIRQ(USARTx_IRQn);
 
   /* (3) Enable USART peripheral clock and clock source ***********************/
@@ -101,13 +84,7 @@ void Configure_USART(void)
   LL_USART_ConfigCharacter(USARTx_INSTANCE, LL_USART_DATAWIDTH_8B, LL_USART_PARITY_NONE, LL_USART_STOPBITS_1);
 
   /* Set Baudrate to 115200 using APB frequency set to 120000000/APB_Div Hz */
-  /* Frequency available for USART peripheral can also be calculated through LL RCC macro */
-  /* Ex :
-      Periphclk = LL_RCC_GetUSARTClockFreq(Instance); or LL_RCC_GetUARTClockFreq(Instance); depending on USART/UART instance
-  
-      In this example, Peripheral Clock is expected to be equal to 120000000/APB_Div Hz => equal to SystemCoreClock/APB_Div
-  */
-  LL_USART_SetBaudRate(USARTx_INSTANCE, SystemCoreClock/APB_Div, LL_USART_OVERSAMPLING_16, 115200); 
+  LL_USART_SetBaudRate(USARTx_INSTANCE, SystemCoreClock/APB_Div, LL_USART_OVERSAMPLING_16, 115200);
 
   /* (5) Enable USART *********************************************************/
   LL_USART_Enable(USARTx_INSTANCE);
@@ -119,8 +96,6 @@ void Configure_USART(void)
 
 /**
   * @brief  Initialize LED1.
-  * @param  None
-  * @retval None
   */
 void LED_Init(void)
 {
@@ -133,8 +108,6 @@ void LED_Init(void)
 
 /**
   * @brief  Turn-on LED1.
-  * @param  None
-  * @retval None
   */
 void LED_On(void)
 {
@@ -167,15 +140,13 @@ void LED_Blinking(uint32_t Period)
   /* Toggle LED1 in an infinite loop */
   while (1)
   {
-    LL_GPIO_TogglePin(LED1_GPIO_PORT, LED1_PIN);  
+    LL_GPIO_TogglePin(LED1_GPIO_PORT, LED1_PIN);
     LL_mDelay(Period);
   }
 }
 
 /**
   * @brief  Configures Key push-button in GPIO or EXTI Line Mode.
-  * @param  None
-  * @retval None
   */
 void UserButton_Init(void)
 {
@@ -200,7 +171,7 @@ void UserButton_Init(void)
 
 /**
   * @brief  System Clock Configuration
-  *         The system Clock is configured as follow : 
+  *         The system Clock is configured as follow :
   *            System Clock source            = PLL (HSE)
   *            SYSCLK(Hz)                     = 120000000
   *            HCLK(Hz)                       = 120000000
@@ -258,8 +229,6 @@ void SystemClock_Config(void)
 /******************************************************************************/
 /**
   * @brief  Function to manage Button push
-  * @param  None
-  * @retval None
   */
 void UserButton_Callback(void)
 {
@@ -270,8 +239,6 @@ void UserButton_Callback(void)
 /**
   * @brief  Function called from USART IRQ Handler when RXNE flag is set
   *         Function is in charge of reading character received on USART RX line.
-  * @param  None
-  * @retval None
   */
 void USART_CharReception_Callback(void)
 {
@@ -293,8 +260,6 @@ __IO uint32_t received_char;
 
 /**
   * @brief  Function called in case of error detected in USART IT Handler
-  * @param  None
-  * @retval None
   */
 void Error_Callback(void)
 {
