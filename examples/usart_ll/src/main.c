@@ -1,52 +1,5 @@
-/**
-  ******************************************************************************
-  * @file    Examples_LL/USART/USART_Communication_Rx_IT/Src/main.c
-  * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    17-March-2017
-  * @brief   This example describes how to send bytes over USART IP using
-  *          the STM32F2xx USART LL API.
-  *          Peripheral initialization done using LL unitary services functions.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
-  *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************
-  */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
-/** @addtogroup STM32F2xx_LL_Examples
-  * @{
-  */
-
-/** @addtogroup USART_Communication_Rx_IT
-  * @{
-  */
 
 /* Private typedef -----------------------------------------------------------*/
 
@@ -141,24 +94,11 @@ void Configure_USART(void)
   USARTx_CLK_ENABLE();
 
   /* (4) Configure USART functional parameters ********************************/
-  
-  /* Disable USART prior modifying configuration registers */
-  /* Note: Commented as corresponding to Reset value */
-  // LL_USART_Disable(USARTx_INSTANCE);
-
   /* TX/RX direction */
   LL_USART_SetTransferDirection(USARTx_INSTANCE, LL_USART_DIRECTION_TX_RX);
 
   /* 8 data bit, 1 start bit, 1 stop bit, no parity */
   LL_USART_ConfigCharacter(USARTx_INSTANCE, LL_USART_DATAWIDTH_8B, LL_USART_PARITY_NONE, LL_USART_STOPBITS_1);
-
-  /* No Hardware Flow control */
-  /* Reset value is LL_USART_HWCONTROL_NONE */
-  // LL_USART_SetHWFlowCtrl(USARTx_INSTANCE, LL_USART_HWCONTROL_NONE);
-
-  /* Oversampling by 16 */
-  /* Reset value is LL_USART_OVERSAMPLING_16 */
-  //LL_USART_SetOverSampling(USARTx_INSTANCE, LL_USART_OVERSAMPLING_16);
 
   /* Set Baudrate to 115200 using APB frequency set to 120000000/APB_Div Hz */
   /* Frequency available for USART peripheral can also be calculated through LL RCC macro */
@@ -189,12 +129,6 @@ void LED_Init(void)
 
   /* Configure IO in output push-pull mode to drive external LED1 */
   LL_GPIO_SetPinMode(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_MODE_OUTPUT);
-  /* Reset value is LL_GPIO_OUTPUT_PUSHPULL */
-  //LL_GPIO_SetPinOutputType(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_OUTPUT_PUSHPULL);
-  /* Reset value is LL_GPIO_SPEED_FREQ_LOW */
-  //LL_GPIO_SetPinSpeed(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_SPEED_FREQ_LOW);
-  /* Reset value is LL_GPIO_PULL_NO */
-  //LL_GPIO_SetPinPull(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_PULL_NO);
 }
 
 /**
@@ -240,14 +174,14 @@ void LED_Blinking(uint32_t Period)
 
 /**
   * @brief  Configures Key push-button in GPIO or EXTI Line Mode.
-  * @param  None 
+  * @param  None
   * @retval None
   */
 void UserButton_Init(void)
 {
   /* Enable the BUTTON Clock */
   USER_BUTTON_GPIO_CLK_ENABLE();
-  
+
   /* Configure GPIO for BUTTON */
   LL_GPIO_SetPinMode(USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN, LL_GPIO_MODE_INPUT);
   LL_GPIO_SetPinPull(USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN, LL_GPIO_PULL_NO);
@@ -260,11 +194,11 @@ void UserButton_Init(void)
   USER_BUTTON_EXTI_FALLING_TRIG_ENABLE();
 
   /* Configure NVIC for USER_BUTTON_EXTI_IRQn */
-  NVIC_SetPriority(USER_BUTTON_EXTI_IRQn, 3);  
+  NVIC_SetPriority(USER_BUTTON_EXTI_IRQn, 3);
   NVIC_EnableIRQ(USER_BUTTON_EXTI_IRQn); 
 }
 
-/**           
+/**
   * @brief  System Clock Configuration
   *         The system Clock is configured as follow : 
   *            System Clock source            = PLL (HSE)
@@ -368,7 +302,7 @@ void Error_Callback(void)
 
   /* Disable USARTx_IRQn */
   NVIC_DisableIRQ(USARTx_IRQn);
-  
+
   /* Error handling example :
     - Read USART SR register to identify flag that leads to IT raising
     - Perform corresponding error handling treatment according to flag
@@ -385,34 +319,3 @@ void Error_Callback(void)
     LED_Blinking(LED_BLINK_ERROR);
   }
 }
-
-#ifdef  USE_FULL_ASSERT
-
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d", file, line) */
-
-  /* Infinite loop */
-  while (1)
-  {
-  }
-}
-#endif
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
