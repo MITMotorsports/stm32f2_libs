@@ -1,3 +1,23 @@
+/**
+  ******************************************************************************
+  *
+  *   This file provides two functions and one global variable to be called from
+  *   user application:
+  *      - SystemInit(): This function is called at startup just after reset and
+  *                      before branch to main program. This call is made inside
+  *                      the "startup_stm32f2xx.s" file.
+  *
+  *      - SystemCoreClock variable: Contains the core clock (HCLK), it can be used
+  *                                  by the user application to setup the SysTick
+  *                                  timer or configure other parameters.
+  *
+  *      - SystemCoreClockUpdate(): Updates the variable SystemCoreClock and must
+  *                                 be called whenever the core clock is changed
+  *                                 during program execution.
+  *
+  ******************************************************************************
+  */
+
 #include "stm32f2xx.h"
 
 #if !defined  (HSE_VALUE)
@@ -16,7 +36,7 @@
 /* This variable can be updated in Three ways :
     1) by calling CMSIS function SystemCoreClockUpdate()
     2) by calling HAL API function HAL_RCC_GetHCLKFreq()
-    3) each time HAL_RCC_ClockConfig() is called to configure the system clock frequency 
+    3) each time HAL_RCC_ClockConfig() is called to configure the system clock frequency
        Note: If you use this function to configure the system clock; then there
              is no need to call the 2 first functions listed above, since SystemCoreClock
              variable is updated automatically.
@@ -27,7 +47,7 @@ const uint8_t APBPrescTable[8]  = {0, 0, 0, 0, 1, 2, 3, 4};
 
 /**
   * @brief  Setup the microcontroller system
-  *         Initialize the Embedded Flash Interface, the PLL and update the 
+  *         Initialize the Embedded Flash Interface, the PLL and update the
   *         SystemFrequency variable.
   * @param  None
   * @retval None
