@@ -7,5 +7,6 @@ sudo apt-get install doxygen
 echo "Running doxygen documentation generation"
 
 mkdir doc
-doxygen stm32f2_cube/Doxyfile
+cd stm32f2_cube
+doxygen Doxyfile
 
