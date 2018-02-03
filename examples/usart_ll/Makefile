@@ -35,7 +35,7 @@ PROJECT = usart_ll
 CORE = cortex-m3
 
 # device family
-FAMILY = STM32F207xx
+FAMILY = STM32F205xx
 
 CUBE_DIR = ../../stm32f2_cube
 

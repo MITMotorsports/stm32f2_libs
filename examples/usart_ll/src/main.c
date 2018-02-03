@@ -24,13 +24,13 @@ int main(void)
   LED_Init();
 
   /* Set LED1 Off */
-  LED_Off();
+  LED_On();
 
   /* Initialize button in EXTI mode */
-  UserButton_Init();
+  //UserButton_Init();
 
   /* Configure USARTx (USART IP configuration and related GPIO initialization) */
-  Configure_USART();
+  //Configure_USART();
 
   /* Infinite loop */
   while (1)
@@ -189,7 +189,7 @@ void UserButton_Init(void)
 void SystemClock_Config(void)
 {
   /* Enable HSE oscillator */
-  LL_RCC_HSE_EnableBypass();
+  // LL_RCC_HSE_EnableBypass();
   LL_RCC_HSE_Enable();
   while(LL_RCC_HSE_IsReady() != 1)
   {
@@ -199,7 +199,9 @@ void SystemClock_Config(void)
   LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
 
   /* Main PLL configuration and activation */
-  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_8, 240, LL_RCC_PLLP_DIV_2);
+  // LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_8, 240, LL_RCC_PLLP_DIV_2);
+  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_25, 240, LL_RCC_PLLP_DIV_2);
+
   LL_RCC_PLL_Enable();
   while(LL_RCC_PLL_IsReady() != 1)
   {
