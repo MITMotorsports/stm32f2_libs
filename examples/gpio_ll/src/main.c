@@ -61,7 +61,7 @@ void Configure_GPIO(void)
   */
 void SystemClock_Config(void)
 {
-  /* Enable HSE oscillator */
+  /* Enable HSE crystal oscillator */
   LL_RCC_HSE_Enable();
   while(LL_RCC_HSE_IsReady() != 1)
   {
