@@ -18,6 +18,7 @@ AS = $(TOOLCHAIN)gcc -x assembler-with-cpp
 OBJCOPY = $(TOOLCHAIN)objcopy
 OBJDUMP = $(TOOLCHAIN)objdump
 SIZE = $(TOOLCHAIN)size
+GDB = $(TOOLCHAIN)gdb
 RM = rm -f
 
 OCD_DIR = /usr/local/share/openocd/scripts
@@ -28,7 +29,7 @@ OCD = openocd
 #=============================================================================#
 
 # project name
-PROJECT = template
+PROJECT = gpio_ll
 
 # core type
 CORE = cortex-m3
@@ -106,6 +107,8 @@ C_STD = gnu99
 #=============================================================================#
 
 MOUNT = /Volumes/NODE_F217IG
+UART_BAUD = 115200
+UART_COM = $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/tty.usbmodem*) $(wildcard /dev/ttyUSB*) $(wildcard /dev/ttyACM*))
 
 #=============================================================================#
 # set the VPATH according to SRCS_DIRS and startup file directory
@@ -182,6 +185,8 @@ BIN = $(OUT_DIR_F)$(PROJECT).bin
 LSS = $(OUT_DIR_F)$(PROJECT).lss
 DMP = $(OUT_DIR_F)$(PROJECT).dmp
 DIS = $(OUT_DIR_F)$(PROJECT).dis
+
+C_DEFS_F = $(C_DEFS) -DUART_BAUD=$(UART_BAUD)
 
 # format final flags for tools, request dependancies for C and asm
 C_FLAGS_F = $(CORE_FLAGS) $(OPTIMIZATION) $(C_WARNINGS) $(C_FLAGS) $(C_DEFS) -MD -MP -MF $(OUT_DIR_F)$(@F:.o=.d) $(INC_DIRS_F)
@@ -309,6 +314,25 @@ copy: all
 program: all
 	@echo "Programming" $(ELF) "with OCD"
 	@$(OCD) -s $(OCD_DIR) $(OCD_FLAGS) -c "program $(ELF) verify reset exit"
+
+#-----------------------------------------------------------------------------#
+# Open up serial port
+#-----------------------------------------------------------------------------#
+
+com:
+	@echo "Starting terminal with baud" $(UART_BAUD)
+	@picocom -b $(UART_BAUD) $(UART_COM)
+
+#-----------------------------------------------------------------------------#
+# Debug
+#-----------------------------------------------------------------------------#
+
+debug_start:
+	$(OCD) -s $(OCD_DIR) $(OCD_FLAGS) -c "init" -c "reset halt" -c 'sleep 10'
+
+debug:
+	$(GDB) -x ./gpio_ll.gdbinit
+
 
 #=============================================================================#
 # make clean
