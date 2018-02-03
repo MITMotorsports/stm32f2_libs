@@ -331,7 +331,7 @@ debug_start:
 	$(OCD) -s $(OCD_DIR) $(OCD_FLAGS) -c "init" -c "reset halt" -c 'sleep 10'
 
 debug:
-	$(GDB) -x ./uart_hal.gdbinit
+	$(GDB) -x ./usart_ll.gdbinit
 
 
 #=============================================================================#
