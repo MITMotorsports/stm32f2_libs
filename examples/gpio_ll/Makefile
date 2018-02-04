@@ -88,7 +88,6 @@ C_STD = gnu99
 # Write Configuration
 #=============================================================================#
 
-MOUNT = /Volumes/NODE_F217IG
 UART_BAUD = 115200
 UART_COM = $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/tty.usbmodem*) $(wildcard /dev/ttyUSB*) $(wildcard /dev/ttyACM*))
 
@@ -280,14 +279,6 @@ print_size :
 
 make_output_dir :
 	$(shell mkdir $(OUT_DIR_F) 2>/dev/null)
-
-#-----------------------------------------------------------------------------#
-# Write to flash of chip by copying to enumerated mass storage device
-#-----------------------------------------------------------------------------#
-
-copy: all
-	@echo "Writing to" $(MOUNT)
-	@cp $(BIN) $(MOUNT)
 
 #-----------------------------------------------------------------------------#
 # Write to flash of chip with ocd
