@@ -15,6 +15,11 @@
 /******************************************************************************/
 
 /* Global variables ----------------------------------------------------------*/
+
+/* SystemCoreClock: Contains the core clock (HCLK), it can be used  by the user
+ *                  application to setup the SysTick timer or configure other
+ *                  parameters.
+ */
 uint32_t SystemCoreClock;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -25,7 +30,11 @@ void     SysTick_Handler(void);
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief  Setup the microcontroller system
+  * @brief  This function is called at startup just after reset and
+  *         before branch to main program. This call is made inside
+  *         the "startup_stm32f2xx.s" file.
+  *
+  *         Setup the microcontroller system
   *         Initialize the Embedded Flash Interface, the PLL and update the
   *         SystemFrequency variable.
   * @param  None
