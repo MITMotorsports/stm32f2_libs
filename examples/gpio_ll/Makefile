@@ -55,11 +55,6 @@ AS_DEFS = -D__STARTUP_CLEAR_BSS
 # headers, current folder is always included)
 INC_DIRS = inc $(CUBE_DIR)/cmsis_inc $(CUBE_DIR)/cmsis_dev_inc $(CUBE_DIR)/hal_inc
 
-# library directories (absolute or relative paths to additional folders with
-# libraries)
-# Don't have  cmsis_lib directory
-# LIB_DIRS = $(CUBE_DIR)/cmsis_lib/
-
 # libraries (additional libraries for linking, e.g. "-lm -lsome_name" to link
 # math library libm.a and libsome_name.a)
 LIBS =
