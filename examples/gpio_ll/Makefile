@@ -69,10 +69,6 @@ C_SRCS = src/main.c ../../stm32f2_cube/hal_src/stm32f2xx_ll_utils.c
 # extension of ASM files
 AS_EXT = s
 
-# wildcard for ASM source files (all files with AS_EXT extension found in
-# current folder and SRCS_DIRS folders will be compiled and linked)
-AS_SRCS = $(wildcard $(patsubst %, %/*.$(AS_EXT), . $(SRCS_DIRS))) 
-
 
 # optimization flags ("-O0" - no optimization, "-O1" - optimize, "-O2" -
 # optimize even more, "-Os" - optimize for size or "-O3" - optimize yet more) 
@@ -155,7 +151,7 @@ endif
 
 FAMILY_LC = $(shell echo $(FAMILY) | tr 'A-Z' 'a-z')
 
-AS_SRCS_F = $(AS_SRCS) $(CUBE_DIR)/cmsis_dev_startup/startup_$(FAMILY_LC).s
+AS_SRCS_F = $(CUBE_DIR)/cmsis_dev_startup/startup_$(FAMILY_LC).s
 
 C_OBJS = $(addprefix $(OUT_DIR_F), $(notdir $(C_SRCS:.$(C_EXT)=.o)))
 AS_OBJS = $(addprefix $(OUT_DIR_F), $(notdir $(AS_SRCS_F:.$(AS_EXT)=.o)))
