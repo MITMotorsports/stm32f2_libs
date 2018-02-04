@@ -62,12 +62,7 @@ SRCS_DIRS = src $(CUBE_DIR)/hal_src
 # extension of C files
 C_EXT = c
 
-LL_SRCS = #stm32f7xx_ll_gpio.c stm32f7xx_ll_rcc.c stm32f7xx_ll_utils.c
-
-# wildcard for C source files (all files with C_EXT extension found in current
-# folder and SRCS_DIRS folders will be compiled and linked)
-C_SRCS1 = $(wildcard $(patsubst %, %/*.$(C_EXT), . $(SRCS_DIRS))) $(addprefix $(CUBE_DIR)/hal_src/, $(LL_SRCS))
-FILTER_OUT = $(foreach v,$(2),$(if $(findstring $(1),$(v)),,$(v)))
+# C source files
 C_SRCS = src/main.c ../../stm32f2_cube/hal_src/stm32f2xx_ll_utils.c
 
 
