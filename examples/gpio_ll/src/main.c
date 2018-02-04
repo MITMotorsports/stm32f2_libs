@@ -9,12 +9,57 @@
 #define LED1_GPIO_PORT          GPIOG
 #define LED1_PIN                LL_GPIO_PIN_6
 
+/************************* Miscellaneous Configuration ************************/
+#define VECT_TAB_OFFSET  0x00 /*!< Vector Table base offset field.
+                                   This value must be a multiple of 0x200. */
+/******************************************************************************/
+
+/* Global variables ----------------------------------------------------------*/
+uint32_t SystemCoreClock;
+
 /* Private function prototypes -----------------------------------------------*/
 void     SystemClock_Config(void);
 void     Configure_GPIO(void);
 void     SysTick_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
+
+/**
+  * @brief  Setup the microcontroller system
+  *         Initialize the Embedded Flash Interface, the PLL and update the
+  *         SystemFrequency variable.
+  * @param  None
+  * @retval None
+  */
+void SystemInit(void)
+{
+  /* Reset the RCC clock configuration to the default reset state ------------*/
+  /* Set HSION bit */
+  RCC->CR |= (uint32_t)0x00000001;
+
+  /* Reset CFGR register */
+  RCC->CFGR = 0x00000000;
+
+  /* Reset HSEON, CSSON and PLLON bits */
+  RCC->CR &= (uint32_t)0xFEF6FFFF;
+
+  /* Reset PLLCFGR register */
+  RCC->PLLCFGR = 0x24003010;
+
+  /* Reset HSEBYP bit */
+  RCC->CR &= (uint32_t)0xFFFBFFFF;
+
+  /* Disable all interrupts */
+  RCC->CIR = 0x00000000;
+
+  /* Configure the Vector Table location add offset address ------------------*/
+#ifdef VECT_TAB_SRAM
+  SCB->VTOR = SRAM_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM */
+#else
+  SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
+#endif
+}
+
 int main(void)
 {
   /* Configure the system clock to 120 MHz */
