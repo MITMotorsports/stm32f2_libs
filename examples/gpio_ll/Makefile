@@ -55,10 +55,6 @@ AS_DEFS = -D__STARTUP_CLEAR_BSS
 # headers, current folder is always included)
 INC_DIRS = inc $(CUBE_DIR)/cmsis_inc $(CUBE_DIR)/cmsis_dev_inc $(CUBE_DIR)/hal_inc
 
-# libraries (additional libraries for linking, e.g. "-lm -lsome_name" to link
-# math library libm.a and libsome_name.a)
-LIBS =
-
 # additional directories with source files (absolute or relative paths to
 # folders with source files, current folder is always included)
 SRCS_DIRS = src $(CUBE_DIR)/hal_src
@@ -211,7 +207,7 @@ $(ELF) : $(LD_SCRIPT)
 
 $(ELF) : $(OBJS)
 	@echo 'Linking target: $(ELF)'
-	$(CC) $(LD_FLAGS_F) $(OBJS) $(LIBS) -o $@
+	$(CC) $(LD_FLAGS_F) $(OBJS) -o $@
 	@echo ' '
 
 #-----------------------------------------------------------------------------#
