@@ -96,16 +96,6 @@ UART_COM = $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/tty.usbmod
 VPATH = $(SRCS_DIRS) ../../stm32f2_cube/cmsis_dev_startup
 
 #=============================================================================#
-# when using output folder, append trailing slash to its name
-#=============================================================================#
-
-ifeq ($(strip $(OUT_DIR_TEST)), )
-	OUT_DIR_TEST_F =
-else
-	OUT_DIR_TEST_F = $(strip $(OUT_DIR_TEST))/
-endif
-
-#=============================================================================#
 # various compilation/programming flags
 #=============================================================================#
 
