@@ -41,7 +41,7 @@ FAMILY = STM32F217xx
 LD_SCRIPT = linker/STM32F217IGHx_FLASH.ld
 
 # output folder (absolute or relative path, leave empty for in-tree compilation)
-OUT_DIR = bin
+OUT_DIR = bin/
 
 # C definitions
 C_DEFS = -D$(FAMILY) -DUSE_FULL_LL_DRIVER
@@ -99,16 +99,6 @@ VPATH = $(SRCS_DIRS) ../../stm32f2_cube/cmsis_dev_startup
 # when using output folder, append trailing slash to its name
 #=============================================================================#
 
-ifeq ($(strip $(OUT_DIR)), )
-	OUT_DIR_F =
-else
-	OUT_DIR_F = $(strip $(OUT_DIR))/
-endif
-
-#=============================================================================#
-# when using output folder, append trailing slash to its name
-#=============================================================================#
-
 ifeq ($(strip $(OUT_DIR_TEST)), )
 	OUT_DIR_TEST_F =
 else
@@ -123,14 +113,14 @@ endif
 CORE_FLAGS = -mcpu=$(CORE) -mthumb
 
 # flags for C compiler
-C_FLAGS = -std=$(C_STD) -g -ggdb3 -fverbose-asm -Wa,-ahlms=$(OUT_DIR_F)$(notdir $(<:.$(C_EXT)=.lst))
+C_FLAGS = -std=$(C_STD) -g -ggdb3 -fverbose-asm -Wa,-ahlms=$(OUT_DIR)$(notdir $(<:.$(C_EXT)=.lst))
 #			c standard	debug(?) 	extra comments	
 
 # flags for assembler
-AS_FLAGS = -g -ggdb3 -Wa,-amhls=$(OUT_DIR_F)$(notdir $(<:.$(AS_EXT)=.lst))
+AS_FLAGS = -g -ggdb3 -Wa,-amhls=$(OUT_DIR)$(notdir $(<:.$(AS_EXT)=.lst))
 
 # flags for linker
-LD_FLAGS = -T$(LD_SCRIPT) -g -Wl,-Map=$(OUT_DIR_F)$(PROJECT).map,--cref
+LD_FLAGS = -T$(LD_SCRIPT) -g -Wl,-Map=$(OUT_DIR)$(PROJECT).map,--cref
 
 OCD_FLAGS = -f openocd.cfg
 
@@ -150,32 +140,32 @@ FAMILY_LC = $(shell echo $(FAMILY) | tr 'A-Z' 'a-z')
 
 AS_SRCS_F = ../../stm32f2_cube/cmsis_dev_startup/startup_$(FAMILY_LC).s
 
-C_OBJS = $(addprefix $(OUT_DIR_F), $(notdir $(C_SRCS:.$(C_EXT)=.o)))
-AS_OBJS = $(addprefix $(OUT_DIR_F), $(notdir $(AS_SRCS_F:.$(AS_EXT)=.o)))
+C_OBJS = $(addprefix $(OUT_DIR), $(notdir $(C_SRCS:.$(C_EXT)=.o)))
+AS_OBJS = $(addprefix $(OUT_DIR), $(notdir $(AS_SRCS_F:.$(AS_EXT)=.o)))
 OBJS = $(AS_OBJS) $(C_OBJS) $(USER_OBJS)
 DEPS = $(OBJS:.o=.d)
 INC_DIRS_F = -I. $(patsubst %, -I%, $(INC_DIRS))
 # Don't have a cmsis_lib directory
 # LIB_DIRS_F = $(patsubst %, -L%, $(LIB_DIRS))
 
-ELF = $(OUT_DIR_F)$(PROJECT).elf
-HEX = $(OUT_DIR_F)$(PROJECT).hex
-BIN = $(OUT_DIR_F)$(PROJECT).bin
-LSS = $(OUT_DIR_F)$(PROJECT).lss
-DMP = $(OUT_DIR_F)$(PROJECT).dmp
-DIS = $(OUT_DIR_F)$(PROJECT).dis
+ELF = $(OUT_DIR)$(PROJECT).elf
+HEX = $(OUT_DIR)$(PROJECT).hex
+BIN = $(OUT_DIR)$(PROJECT).bin
+LSS = $(OUT_DIR)$(PROJECT).lss
+DMP = $(OUT_DIR)$(PROJECT).dmp
+DIS = $(OUT_DIR)$(PROJECT).dis
 
 C_DEFS_F = $(C_DEFS) -DUART_BAUD=$(UART_BAUD)
 
 # format final flags for tools, request dependancies for C and asm
-C_FLAGS_F = $(CORE_FLAGS) $(OPTIMIZATION) $(C_WARNINGS) $(C_FLAGS) $(C_DEFS) -MD -MP -MF $(OUT_DIR_F)$(@F:.o=.d) $(INC_DIRS_F)
-AS_FLAGS_F = $(CORE_FLAGS) $(AS_FLAGS) $(AS_DEFS) -MD -MP -MF $(OUT_DIR_F)$(@F:.o=.d) $(INC_DIRS_F)
+C_FLAGS_F = $(CORE_FLAGS) $(OPTIMIZATION) $(C_WARNINGS) $(C_FLAGS) $(C_DEFS) -MD -MP -MF $(OUT_DIR)$(@F:.o=.d) $(INC_DIRS_F)
+AS_FLAGS_F = $(CORE_FLAGS) $(AS_FLAGS) $(AS_DEFS) -MD -MP -MF $(OUT_DIR)$(@F:.o=.d) $(INC_DIRS_F)
 # Don't have a cmsis_lib directory
 # LD_FLAGS_F = $(CORE_FLAGS) $(LD_FLAGS) $(LIB_DIRS_F)
 LD_FLAGS_F = $(CORE_FLAGS) $(LD_FLAGS)
 
 #contents of output directory
-GENERATED = $(wildcard $(patsubst %, $(OUT_DIR_F)*.%, bin d dmp elf hex lss lst map o dis))
+GENERATED = $(wildcard $(patsubst %, $(OUT_DIR)*.%, bin d dmp elf hex lss lst map o dis))
 
 #=============================================================================#
 # make all
@@ -202,7 +192,7 @@ $(ELF) : $(OBJS)
 # compiling - C source -> objects
 #-----------------------------------------------------------------------------#
 
-$(OUT_DIR_F)%.o : %.$(C_EXT)
+$(OUT_DIR)%.o : %.$(C_EXT)
 	@echo 'Compiling file: $<'
 	$(CC) -c $(C_FLAGS_F) $< -o $@
 	@echo ' '
@@ -211,7 +201,7 @@ $(OUT_DIR_F)%.o : %.$(C_EXT)
 # assembling - ASM source -> objects
 #-----------------------------------------------------------------------------#
 
-$(OUT_DIR_F)%.o : %.$(AS_EXT)
+$(OUT_DIR)%.o : %.$(AS_EXT)
 	@echo 'Assembling file: $<'
 	$(AS) -c $(AS_FLAGS_F) $< -o $@
 	@echo ' '
@@ -276,7 +266,7 @@ print_size :
 #-----------------------------------------------------------------------------#
 
 make_output_dir :
-	$(shell mkdir $(OUT_DIR_F) 2>/dev/null)
+	$(shell mkdir $(OUT_DIR) 2>/dev/null)
 
 #-----------------------------------------------------------------------------#
 # Write to flash of chip with ocd
@@ -310,10 +300,10 @@ debug:
 #=============================================================================#
 
 clean:
-ifeq ($(strip $(OUT_DIR_F)), )
+ifeq ($(strip $(OUT_DIR)), )
 	@echo 'Removing all generated output files'
 else
-	@echo 'Removing all generated output files from output directory: $(OUT_DIR_F)'
+	@echo 'Removing all generated output files from output directory: $(OUT_DIR)'
 endif
 ifneq ($(strip $(GENERATED)), )
 	$(RM) $(GENERATED)
