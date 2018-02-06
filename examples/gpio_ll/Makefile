@@ -135,8 +135,6 @@ AS_OBJS = $(addprefix $(OUT_DIR), $(notdir $(AS_SRCS_F:.$(AS_EXT)=.o)))
 OBJS = $(AS_OBJS) $(C_OBJS) $(USER_OBJS)
 DEPS = $(OBJS:.o=.d)
 INC_DIRS_F = -I. $(patsubst %, -I%, $(INC_DIRS))
-# Don't have a cmsis_lib directory
-# LIB_DIRS_F = $(patsubst %, -L%, $(LIB_DIRS))
 
 ELF = $(OUT_DIR)$(PROJECT).elf
 HEX = $(OUT_DIR)$(PROJECT).hex
@@ -145,13 +143,9 @@ LSS = $(OUT_DIR)$(PROJECT).lss
 DMP = $(OUT_DIR)$(PROJECT).dmp
 DIS = $(OUT_DIR)$(PROJECT).dis
 
-C_DEFS_F = $(C_DEFS) -DUART_BAUD=$(UART_BAUD)
-
 # format final flags for tools, request dependancies for C and asm
 C_FLAGS_F = $(CORE_FLAGS) $(OPTIMIZATION) $(C_WARNINGS) $(C_FLAGS) $(C_DEFS) -MD -MP -MF $(OUT_DIR)$(@F:.o=.d) $(INC_DIRS_F)
 AS_FLAGS_F = $(CORE_FLAGS) $(AS_FLAGS) $(AS_DEFS) -MD -MP -MF $(OUT_DIR)$(@F:.o=.d) $(INC_DIRS_F)
-# Don't have a cmsis_lib directory
-# LD_FLAGS_F = $(CORE_FLAGS) $(LD_FLAGS) $(LIB_DIRS_F)
 LD_FLAGS_F = $(CORE_FLAGS) $(LD_FLAGS)
 
 #contents of output directory
