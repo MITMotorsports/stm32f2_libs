@@ -159,7 +159,6 @@ all : make_output_dir $(ELF) $(LSS) $(DMP) $(HEX) $(BIN) $(DIS) print_size
 
 # make object files dependent on Makefile
 $(OBJS) : Makefile
-$(TEST_OBJS) : Makefile
 # make .elf file dependent on linker script
 $(ELF) : $(LD_SCRIPT)
 
