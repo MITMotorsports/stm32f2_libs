@@ -37,8 +37,6 @@ CORE = cortex-m3
 # device family
 FAMILY = STM32F217xx
 
-CUBE_DIR = ../../stm32f2_cube
-
 # linker script
 LD_SCRIPT = linker/STM32F217IGHx_FLASH.ld
 
@@ -53,11 +51,11 @@ AS_DEFS = -D__STARTUP_CLEAR_BSS
 
 # include directories (absolute or relative paths to additional folders with
 # headers, current folder is always included)
-INC_DIRS = inc $(CUBE_DIR)/cmsis_inc $(CUBE_DIR)/cmsis_dev_inc $(CUBE_DIR)/hal_inc
+INC_DIRS = inc ../../stm32f2_cube/cmsis_inc ../../stm32f2_cube/cmsis_dev_inc ../../stm32f2_cube/hal_inc
 
 # additional directories with source files (absolute or relative paths to
 # folders with source files, current folder is always included)
-SRCS_DIRS = src $(CUBE_DIR)/hal_src
+SRCS_DIRS = src ../../stm32f2_cube/hal_src
 
 # extension of C files
 C_EXT = c
@@ -95,7 +93,7 @@ UART_COM = $(word 1, $(wildcard /dev/tty.usbserial-*) $(wildcard /dev/tty.usbmod
 # set the VPATH according to SRCS_DIRS and startup file directory
 #=============================================================================#
 
-VPATH = $(SRCS_DIRS) $(CUBE_DIR)/cmsis_dev_startup $(CUBE_DIR)/hal_src
+VPATH = $(SRCS_DIRS) ../../stm32f2_cube/cmsis_dev_startup
 
 #=============================================================================#
 # when using output folder, append trailing slash to its name
@@ -150,7 +148,7 @@ endif
 
 FAMILY_LC = $(shell echo $(FAMILY) | tr 'A-Z' 'a-z')
 
-AS_SRCS_F = $(CUBE_DIR)/cmsis_dev_startup/startup_$(FAMILY_LC).s
+AS_SRCS_F = ../../stm32f2_cube/cmsis_dev_startup/startup_$(FAMILY_LC).s
 
 C_OBJS = $(addprefix $(OUT_DIR_F), $(notdir $(C_SRCS:.$(C_EXT)=.o)))
 AS_OBJS = $(addprefix $(OUT_DIR_F), $(notdir $(AS_SRCS_F:.$(AS_EXT)=.o)))
