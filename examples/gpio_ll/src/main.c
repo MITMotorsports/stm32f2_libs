@@ -116,8 +116,8 @@ void Configure_GPIO(void)
 void SystemClock_Config(void)
 {
   /* Enable HSE crystal oscillator */
-  LL_RCC_HSE_Enable();
-  while(LL_RCC_HSE_IsReady() != 1)
+  LL_RCC_HSI_Enable();
+  while(LL_RCC_HSI_IsReady() != 1)
   {
   };
 
@@ -125,7 +125,7 @@ void SystemClock_Config(void)
   LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
 
   /* Main PLL configuration and activation */
-  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_25, 240, LL_RCC_PLLP_DIV_2);
+  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLLM_DIV_16, 240, LL_RCC_PLLP_DIV_2);
   LL_RCC_PLL_Enable();
   while(LL_RCC_PLL_IsReady() != 1)
   {
