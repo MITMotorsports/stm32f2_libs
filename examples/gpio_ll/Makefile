@@ -35,10 +35,10 @@ PROJECT = gpio_ll
 CORE = cortex-m3
 
 # device family
-FAMILY = STM32F217xx
+FAMILY = STM32F205xx
 
 # linker script
-LD_SCRIPT = linker/STM32F217IGHx_FLASH.ld
+LD_SCRIPT = linker/STM32F205RGTx_FLASH.ld
 
 # output folder (absolute or relative path, leave empty for in-tree compilation)
 OUT_DIR = bin/
