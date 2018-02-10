@@ -4,7 +4,6 @@
 /* Private function prototypes -----------------------------------------------*/
 void     SystemClock_Config(void);
 void     Configure_USART(void);
-void     UserButton_Init(void);
 
 /* Private functions ---------------------------------------------------------*/
 
