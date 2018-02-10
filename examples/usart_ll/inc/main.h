@@ -27,25 +27,25 @@
 
 /* Private definitions covering GPIO clock and USART pins 
    depending on selected USART instance. */
-#if (USE_VCP_CONNECTION == 0)
+// #if (USE_VCP_CONNECTION == 0)
 
-/* USART1 instance is used. (TX on PA.09, RX on PA.10)
-   (requires wiring USART1 TX/Rx Pins to USB to UART adapter) */
-#define USARTx_INSTANCE               USART1
-#define USARTx_CLK_ENABLE()           LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
-#define USARTx_IRQn                   USART1_IRQn
-#define USARTx_IRQHandler             USART1_IRQHandler
+// /* USART1 instance is used. (TX on PA.09, RX on PA.10)
+//    (requires wiring USART1 TX/Rx Pins to USB to UART adapter) */
+// #define USARTx_INSTANCE               USART1
+// #define USARTx_CLK_ENABLE()           LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
+// #define USARTx_IRQn                   USART1_IRQn
+// #define USARTx_IRQHandler             USART1_IRQHandler
 
-#define USARTx_GPIO_CLK_ENABLE()      LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)   /* Enable the peripheral clock of GPIOA */
-#define USARTx_TX_PIN                 LL_GPIO_PIN_9
-#define USARTx_TX_GPIO_PORT           GPIOA
-#define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(GPIOA, LL_GPIO_PIN_9, LL_GPIO_AF_7)
-#define USARTx_RX_PIN                 LL_GPIO_PIN_10
-#define USARTx_RX_GPIO_PORT           GPIOA
-#define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(GPIOA, LL_GPIO_PIN_10, LL_GPIO_AF_7)
-#define APB_Div 2
+// #define USARTx_GPIO_CLK_ENABLE()      LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)   /* Enable the peripheral clock of GPIOA */
+// #define USARTx_TX_PIN                 LL_GPIO_PIN_9
+// #define USARTx_TX_GPIO_PORT           GPIOA
+// #define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(GPIOA, LL_GPIO_PIN_9, LL_GPIO_AF_7)
+// #define USARTx_RX_PIN                 LL_GPIO_PIN_10
+// #define USARTx_RX_GPIO_PORT           GPIOA
+// #define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(GPIOA, LL_GPIO_PIN_10, LL_GPIO_AF_7)
+// #define APB_Div 2
 
-#else
+// #else
 
 /* USART3 instance is used. (TX on PD.08, RX on PD.09)
    (please ensure that USART communication between the target MCU and ST-LINK MCU is properly enabled
@@ -58,12 +58,12 @@
 #define USARTx_GPIO_CLK_ENABLE()      LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB)   /* Enable the peripheral clock of GPIOB */
 #define USARTx_TX_PIN                 LL_GPIO_PIN_6
 #define USARTx_TX_GPIO_PORT           GPIOB
-#define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(GPIOB, LL_GPIO_PIN_6, LL_GPIO_AF_7)
+#define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_6, LL_GPIO_AF_7)
 #define USARTx_RX_PIN                 LL_GPIO_PIN_7
 #define USARTx_RX_GPIO_PORT           GPIOB
-#define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(GPIOB, LL_GPIO_PIN_7, LL_GPIO_AF_7)
-#define APB_Div 4
-#endif /* (USE_VCP_CONNECTION == 0) */
+#define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_7, LL_GPIO_AF_7)
+#define APB_Div 2
+// #endif /* (USE_VCP_CONNECTION == 0) */
 
 #define CLOSE_CONTACTOR_PIN                           LL_GPIO_PIN_10
 #define CLOSE_CONTACTOR_GPIO_PORT                     GPIOC

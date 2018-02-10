@@ -117,7 +117,7 @@ void SystemClock_Config(void)
   };
 
   /* Set FLASH latency */
-  LL_FLASH_SetLatency(LL_FLASH_LATENCY_0);
+  LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
 
   /* Main PLL configuration and activation */
   LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLLM_DIV_16, 240, LL_RCC_PLLP_DIV_2);
@@ -155,7 +155,7 @@ __IO uint32_t received_char;
   /* Read Received character. RXNE flag is cleared by reading of DR register */
   received_char = LL_USART_ReceiveData8(USARTx_INSTANCE);
 
-  /* Check if received value is corresponding to specific one : C or c */
+  /* Check if received value is corresponding to specific one : S or s */
   if ((received_char == 'C') || (received_char == 'c'))
   {
     LL_GPIO_TogglePin(CLOSE_CONTACTOR_GPIO_PORT, CLOSE_CONTACTOR_PIN);
