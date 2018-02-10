@@ -4,10 +4,6 @@
 /* Private function prototypes -----------------------------------------------*/
 void     SystemClock_Config(void);
 void     Configure_USART(void);
-void     LED_Init(void);
-void     LED_On(void);
-void     LED_Off(void);
-void     LED_Blinking(uint32_t Period);
 void     UserButton_Init(void);
 
 /* Private functions ---------------------------------------------------------*/
@@ -20,14 +16,15 @@ int main(void)
   /* Configure the system clock to 120 MHz */
   SystemClock_Config();
 
-  /* Initialize LED1 */
-  LED_Init();
+  // Init the clocks for the gpios
+  CLOSE_CONTACTOR_GPIO_CLK_ENABLE();
+  MCU_ON_GPIO_CLK_ENABLE();
 
-  /* Set LED1 Off */
-  LED_Off();
-
-  /* Initialize button in EXTI mode */
-  UserButton_Init();
+  // Initial state of the gpios
+  LL_GPIO_SetPinMode(CLOSE_CONTACTOR_GPIO_PORT, CLOSE_CONTACTOR_PIN, LL_GPIO_MODE_OUTPUT);
+  LL_GPIO_SetPinMode(MCU_ON_GPIO_PORT, MCU_ON_PIN, LL_GPIO_MODE_OUTPUT);
+  LL_GPIO_ResetOutputPin(CLOSE_CONTACTOR_GPIO_PORT, CLOSE_CONTACTOR_PIN); // OFF
+  LL_GPIO_SetOutputPin(MCU_ON_GPIO_PORT, MCU_ON_PIN); // ON
 
   /* Configure USARTx (USART IP configuration and related GPIO initialization) */
   Configure_USART();
@@ -95,81 +92,6 @@ void Configure_USART(void)
 }
 
 /**
-  * @brief  Initialize LED1.
-  */
-void LED_Init(void)
-{
-  /* Enable the LED1 Clock */
-  LED1_GPIO_CLK_ENABLE();
-
-  /* Configure IO in output push-pull mode to drive external LED1 */
-  LL_GPIO_SetPinMode(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_MODE_OUTPUT);
-}
-
-/**
-  * @brief  Turn-on LED1.
-  */
-void LED_On(void)
-{
-  /* Turn LED1 on */
-  LL_GPIO_SetOutputPin(LED1_GPIO_PORT, LED1_PIN);
-}
-
-/**
-  * @brief  Turn-off LED1.
-  * @param  None
-  * @retval None
-  */
-void LED_Off(void)
-{
-  /* Turn LED1 off */
-  LL_GPIO_ResetOutputPin(LED1_GPIO_PORT, LED1_PIN);
-}
-
-/**
-  * @brief  Set LED1 to Blinking mode for an infinite loop (toggle period based on value provided as input parameter).
-  * @param  Period : Period of time (in ms) between each toggling of LED
-  *   This parameter can be user defined values. Pre-defined values used in that example are :
-  *     @arg LED_BLINK_FAST : Fast Blinking
-  *     @arg LED_BLINK_SLOW : Slow Blinking
-  *     @arg LED_BLINK_ERROR : Error specific Blinking
-  * @retval None
-  */
-void LED_Blinking(uint32_t Period)
-{
-  /* Toggle LED1 in an infinite loop */
-  while (1)
-  {
-    LL_GPIO_TogglePin(LED1_GPIO_PORT, LED1_PIN);
-    LL_mDelay(Period);
-  }
-}
-
-/**
-  * @brief  Configures Key push-button in GPIO or EXTI Line Mode.
-  */
-void UserButton_Init(void)
-{
-  /* Enable the BUTTON Clock */
-  USER_BUTTON_GPIO_CLK_ENABLE();
-
-  /* Configure GPIO for BUTTON */
-  LL_GPIO_SetPinMode(USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN, LL_GPIO_MODE_INPUT);
-  LL_GPIO_SetPinPull(USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN, LL_GPIO_PULL_NO);
-
-  /* Connect External Line to the GPIO*/
-  USER_BUTTON_SYSCFG_SET_EXTI();
-
-  /* Enable a rising trigger EXTI Line13 Interrupt */
-  USER_BUTTON_EXTI_LINE_ENABLE();
-  USER_BUTTON_EXTI_FALLING_TRIG_ENABLE();
-
-  /* Configure NVIC for USER_BUTTON_EXTI_IRQn */
-  NVIC_SetPriority(USER_BUTTON_EXTI_IRQn, 3);
-  NVIC_EnableIRQ(USER_BUTTON_EXTI_IRQn); 
-}
-
-/**
   * @brief  System Clock Configuration
   *         The system Clock is configured as follow :
   *            System Clock source            = PLL (HSE)
@@ -189,17 +111,17 @@ void UserButton_Init(void)
 void SystemClock_Config(void)
 {
   /* Enable HSE oscillator */
-  LL_RCC_HSE_EnableBypass();
-  LL_RCC_HSE_Enable();
-  while(LL_RCC_HSE_IsReady() != 1)
+  // LL_RCC_HSE_EnableBypass();
+  LL_RCC_HSI_Enable();
+  while(LL_RCC_HSI_IsReady() != 1)
   {
   };
 
   /* Set FLASH latency */
-  LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
+  LL_FLASH_SetLatency(LL_FLASH_LATENCY_0);
 
   /* Main PLL configuration and activation */
-  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_8, 240, LL_RCC_PLLP_DIV_2);
+  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSI, LL_RCC_PLLM_DIV_16, 240, LL_RCC_PLLP_DIV_2);
   LL_RCC_PLL_Enable();
   while(LL_RCC_PLL_IsReady() != 1)
   {
@@ -223,19 +145,6 @@ void SystemClock_Config(void)
   SystemCoreClock = 120000000;
 }
 
-
-/******************************************************************************/
-/*   IRQ HANDLER TREATMENT Functions                                          */
-/******************************************************************************/
-/**
-  * @brief  Function to manage Button push
-  */
-void UserButton_Callback(void)
-{
-  /* Turn LED1 Off on User button press (allow to restart sequence) */
-  LED_Off();
-}
-
 /**
   * @brief  Function called from USART IRQ Handler when RXNE flag is set
   *         Function is in charge of reading character received on USART RX line.
@@ -247,11 +156,10 @@ __IO uint32_t received_char;
   /* Read Received character. RXNE flag is cleared by reading of DR register */
   received_char = LL_USART_ReceiveData8(USARTx_INSTANCE);
 
-  /* Check if received value is corresponding to specific one : S or s */
-  if ((received_char == 'S') || (received_char == 's'))
+  /* Check if received value is corresponding to specific one : C or c */
+  if ((received_char == 'C') || (received_char == 'c'))
   {
-    /* Turn LED1 On : Expected character has been received */
-    LED_On();
+    LL_GPIO_TogglePin(CLOSE_CONTACTOR_GPIO_PORT, CLOSE_CONTACTOR_PIN);
   }
 
   /* Echo received character on TX */
@@ -276,11 +184,11 @@ void Error_Callback(void)
   if (sr_reg & LL_USART_SR_NE)
   {
     /* case Noise Error flag is raised : ... */
-    LED_Blinking(LED_BLINK_FAST);
+    // LED_Blinking(LED_BLINK_FAST);
   }
   else
   {
     /* Unexpected IT source : Set LED to Blinking mode to indicate error occurs */
-    LED_Blinking(LED_BLINK_ERROR);
+    // LED_Blinking(LED_BLINK_ERROR);
   }
 }

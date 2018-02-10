@@ -65,13 +65,13 @@
 #define APB_Div 4
 #endif /* (USE_VCP_CONNECTION == 0) */
 
-/**
-  * @brief LED1
-  */
+#define CLOSE_CONTACTOR_PIN                           LL_GPIO_PIN_0
+#define CLOSE_CONTACTOR_GPIO_PORT                     GPIOB
+#define CLOSE_CONTACTOR_GPIO_CLK_ENABLE()             LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB)
 
-#define LED1_PIN                           LL_GPIO_PIN_0
-#define LED1_GPIO_PORT                     GPIOB
-#define LED1_GPIO_CLK_ENABLE()             LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB)
+#define MCU_ON_PIN                                    LL_GPIO_PIN_1
+#define MCU_ON_GPIO_PORT                              GPIOB
+#define MCU_ON_GPIO_CLK_ENABLE()                      LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB)
 
 /**
   * @brief Toggle periods for various blinking modes
@@ -82,25 +82,10 @@
 #define LED_BLINK_ERROR 1000
 
 
-/**
-  * @brief Key push-button
-  */
-#define USER_BUTTON_PIN                         LL_GPIO_PIN_13
-#define USER_BUTTON_GPIO_PORT                   GPIOC
-#define USER_BUTTON_GPIO_CLK_ENABLE()           LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
-#define USER_BUTTON_EXTI_LINE                   LL_EXTI_LINE_13
-#define USER_BUTTON_EXTI_IRQn                   EXTI15_10_IRQn
-#define USER_BUTTON_EXTI_LINE_ENABLE()          LL_EXTI_EnableIT_0_31(USER_BUTTON_EXTI_LINE)   
-#define USER_BUTTON_EXTI_FALLING_TRIG_ENABLE()  LL_EXTI_EnableFallingTrig_0_31(USER_BUTTON_EXTI_LINE)
-#define USER_BUTTON_SYSCFG_SET_EXTI()           do {                                                                     \
-                                                  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_SYSCFG);                  \
-                                                  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTC, LL_SYSCFG_EXTI_LINE13);  \
-                                                } while(0)
 #define USER_BUTTON_IRQHANDLER                  EXTI15_10_IRQHandler
 
 /* Exported functions ------------------------------------------------------- */
 /* IRQ Handler treatment functions */
-void UserButton_Callback(void);
 void USART_CharReception_Callback(void);
 void Error_Callback(void);
 

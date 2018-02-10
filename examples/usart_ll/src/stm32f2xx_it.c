@@ -96,15 +96,6 @@ void SysTick_Handler(void)
   */
 void USER_BUTTON_IRQHANDLER(void)
 {
-  /* Manage Flags */
-  if(LL_EXTI_IsActiveFlag_0_31(USER_BUTTON_EXTI_LINE) != RESET)
-  {
-    /* Clear EXTI flag */
-    LL_EXTI_ClearFlag_0_31(USER_BUTTON_EXTI_LINE);
-
-    /* Handle user button press in dedicated function */
-    UserButton_Callback(); 
-  }
 }
 
 /**

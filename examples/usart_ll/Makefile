@@ -35,7 +35,7 @@ PROJECT = usart_ll
 CORE = cortex-m3
 
 # device family
-FAMILY = STM32F207xx
+FAMILY = STM32F205xx
 
 CUBE_DIR = ../../stm32f2_cube
 
@@ -331,7 +331,7 @@ debug_start:
 	$(OCD) -s $(OCD_DIR) $(OCD_FLAGS) -c "init" -c "reset halt" -c 'sleep 10'
 
 debug:
-	$(GDB) -x ./uart_hal.gdbinit
+	$(GDB) -x ./usart_ll.gdbinit
 
 
 #=============================================================================#
