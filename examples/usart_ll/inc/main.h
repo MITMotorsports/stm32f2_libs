@@ -65,11 +65,11 @@
 #define APB_Div 2
 // #endif /* (USE_VCP_CONNECTION == 0) */
 
-#define CLOSE_CONTACTOR_PIN                           LL_GPIO_PIN_10
+#define CLOSE_CONTACTOR_PIN                           LL_GPIO_PIN_8
 #define CLOSE_CONTACTOR_GPIO_PORT                     GPIOC
 #define CLOSE_CONTACTOR_GPIO_CLK_ENABLE()             LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
 
-#define MCU_ON_PIN                                    LL_GPIO_PIN_11
+#define MCU_ON_PIN                                    LL_GPIO_PIN_7
 #define MCU_ON_GPIO_PORT                              GPIOC
 #define MCU_ON_GPIO_CLK_ENABLE()                      LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
 
