@@ -5,9 +5,9 @@
 #include "stm32f2xx_ll_gpio.h"
 
 /* Private define ------------------------------------------------------------*/
-#define LED1_GPIO_CLK_ENABLE()  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
-#define LED1_GPIO_PORT          GPIOC
-#define LED1_PIN                LL_GPIO_PIN_10
+#define LED1_GPIO_CLK_ENABLE()  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOG)
+#define LED1_GPIO_PORT          GPIOG
+#define LED1_PIN                LL_GPIO_PIN_6
 
 /************************* Miscellaneous Configuration ************************/
 #define VECT_TAB_OFFSET  0x00 /*!< Vector Table base offset field.
@@ -21,6 +21,7 @@
  *                  parameters.
  */
 uint32_t SystemCoreClock;
+GPIO_TypeDef * gpioG_base = (GPIO_TypeDef *) 0x40021800;
 
 /* Private function prototypes -----------------------------------------------*/
 void     SystemClock_Config(void);
@@ -80,7 +81,9 @@ int main(void)
   /* Toggle IO in an infinite loop */
   while (1)
   {
-    LL_GPIO_TogglePin(LED1_GPIO_PORT, LED1_PIN);
+    // LL_GPIO_TogglePin(LED1_GPIO_PORT, LED1_PIN);
+    // Toggle PG6
+    gpioG_base->ODR = (gpioG_base->ODR) ^ 0x00000040;
 
     /* Insert delay 250 ms */
     LL_mDelay(250);
@@ -90,10 +93,14 @@ int main(void)
 void Configure_GPIO(void)
 {
   /* Enable the LED1 Clock */
-  LED1_GPIO_CLK_ENABLE();
+  // LED1_GPIO_CLK_ENABLE();
+  RCC->AHB1ENR |= LL_AHB1_GRP1_PERIPH_GPIOG;
 
   /* Configure IO in output push-pull mode to drive external LED1 */
-  LL_GPIO_SetPinMode(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_MODE_OUTPUT);
+  // LL_GPIO_SetPinMode(LED1_GPIO_PORT, LED1_PIN, LL_GPIO_MODE_OUTPUT);
+  // Configure PG6
+  gpioG_base->MODER &= ~0x00003000;
+  gpioG_base->MODER |= 0x00001000;
 }
 
 /**
