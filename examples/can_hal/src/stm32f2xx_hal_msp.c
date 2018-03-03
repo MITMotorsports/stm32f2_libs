@@ -125,16 +125,3 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef *hcan)
   HAL_NVIC_DisableIRQ(CANx_RX_IRQn);
 }
 
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -78,48 +78,24 @@ int main(void)
   SystemClock_Config();
   
   /* -1- Enable GPIOG, GPIOC and GPIOI Clock (to be able to program the configuration registers) */
-  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOI_CLK_ENABLE();
 
   /* -2- Configure PG.6, PG.8, PI.9 and PC.7 IOs in output push-pull mode to
          drive external LEDs */
-  GPIO_InitStruct.Pin = (GPIO_PIN_6 | GPIO_PIN_8);
+  GPIO_InitStruct.Pin = (GPIO_PIN_10 | GPIO_PIN_11);
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
   
-  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
   
-  GPIO_InitStruct.Pin = GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
-  
-  HAL_GPIO_Init(GPIOI, &GPIO_InitStruct); 
-  
-  GPIO_InitStruct.Pin = GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
-  
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct); 
-
   /* -3- Toggle PG.6, PG.8, PI.9 and PC.7 IOs in an infinite loop */  
   while (1)
   {
-    HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_6);
+    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_10);
+    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_11);
     /* Insert delay 100 ms */
-    HAL_Delay(100);
-    HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_8);
-    /* Insert delay 100 ms */
-    HAL_Delay(100);
-    HAL_GPIO_TogglePin(GPIOI, GPIO_PIN_9);
-    /* Insert delay 100 ms */
-    HAL_Delay(100);
-    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
-    /* Insert delay 100 ms */
-    HAL_Delay(100);
+    HAL_Delay(1000);
   }
 }
 
@@ -148,11 +124,11 @@ static void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct;
 
   /* Enable HSE Oscillator and activate PLL with HSE as source */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 25;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 16;
   RCC_OscInitStruct.PLL.PLLN = 240;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 5;

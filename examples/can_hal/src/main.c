@@ -1,76 +1,18 @@
-/**
-  ******************************************************************************
-  * @file    CAN/CAN_Networking/Src/main.c 
-  * @author  MCD Application Team
-  * @version V1.1.3
-  * @date    17-March-2017
-  * @brief   This example shows how to configure the CAN peripheral 
-  *          to send and receive CAN frames in normal mode. The sent frames 
-  *          are used to control LEDs by pressing Key push button.
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
-  *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************
-  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/** @addtogroup STM32F2xx_HAL_Examples
-  * @{
-  */
-
-/** @addtogroup CAN_Networking
-  * @{
-  */ 
-
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-#define KEY_PRESSED     0x00
-#define KEY_NOT_PRESSED 0x01
-
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-uint8_t ubKeyNumber = 0x0;
 CAN_HandleTypeDef    CanHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 static void CAN_Config(void);
 static void SystemClock_Config(void);
 static void Error_Handler(void);
-static void LED_Display(uint8_t Ledstatus);
+
+static uint8_t shouldSend;
 
 /* Private functions ---------------------------------------------------------*/
 
-/**
-  * @brief  Main program
-  * @param  None
-  * @retval None
-  */
 int main(void)
 {
   /* STM32F2xx HAL library initialization:
@@ -84,15 +26,6 @@ int main(void)
   /* Configure the system clock to 120 MHz */
   SystemClock_Config();
   
-  /* Configure LED1, LED2, LED3 and LED4 */
-  BSP_LED_Init(LED1);
-  BSP_LED_Init(LED2);
-  BSP_LED_Init(LED3);
-  BSP_LED_Init(LED4);
-  
-  /* Configure Key Button */  
-  BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_GPIO);
-  
   /*##-1- Configure the CAN peripheral #######################################*/
   CAN_Config();
   
@@ -102,34 +35,39 @@ int main(void)
     /* Reception Error */
     Error_Handler();
   }
+
+  shouldSend = 0;
     
   /* Infinite loop */
   while(1)
   {
-    while(BSP_PB_GetState(BUTTON_KEY) == KEY_PRESSED)
-    {
-      if(ubKeyNumber == 0x4) 
-      {
-        ubKeyNumber = 0x00;
-      }
-      else
-      {
-        LED_Display(++ubKeyNumber);
-        /* Set the data to be transmitted */
-        CanHandle.pTxMsg->Data[0] = ubKeyNumber;
-        CanHandle.pTxMsg->Data[1] = 0xAD;
-        /*##-3- Start the Transmission process ###############################*/
-        if(HAL_CAN_Transmit(&CanHandle, 10) != HAL_OK)
-        {
-          /* Transmission Error */
-          Error_Handler();
-        }
-        HAL_Delay(10);
-        while(BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
-        {
-        }
-      }
-    }
+    // if (shouldSend) {
+     CanHandle.pTxMsg->StdId = 0x0F0;
+     CanHandle.pTxMsg->RTR = CAN_RTR_DATA;
+     CanHandle.pTxMsg->IDE = CAN_ID_STD;
+     CanHandle.pTxMsg->DLC = 8;
+     uint8_t data[8];
+     data[0] = 1;
+     data[1] = 0;
+     data[2] = 0;
+     data[3] = 0;
+     data[4] = 0;
+     data[5] = 0;
+     data[6] = 0;
+     data[7] = 0;
+     // CanHandle.pTxMsg->Data[0] = 0;
+     memcpy(CanHandle.pTxMsg->Data, data, 8 * sizeof(uint8_t));
+     HAL_CAN_StateTypeDef output;
+     output = HAL_CAN_Transmit(&CanHandle, 10);   
+     if (output != HAL_OK) {
+       uint32_t ecode = HAL_CAN_GetError(&CanHandle);
+       //Error_Handler();
+     }
+
+     //shouldSend = 0;
+
+      HAL_Delay(1000);
+    // }
   } 
 }
 
@@ -158,11 +96,14 @@ static void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct;
 
   /* Enable HSE Oscillator and activate PLL with HSE as source */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  // RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  // RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 25;
+  // RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 16;
   RCC_OscInitStruct.PLL.PLLN = 240;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 5;
@@ -184,11 +125,6 @@ static void SystemClock_Config(void)
   }
 }
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  None
-  * @retval None
-  */
 static void Error_Handler(void)
 {
   while(1)
@@ -196,11 +132,6 @@ static void Error_Handler(void)
   }
 }
 
-/**
-  * @brief  Configures the CAN.
-  * @param  None
-  * @retval None
-  */
 static void CAN_Config(void)
 {
   CAN_FilterConfTypeDef  sFilterConfig;
@@ -222,7 +153,7 @@ static void CAN_Config(void)
   CanHandle.Init.SJW = CAN_SJW_1TQ;
   CanHandle.Init.BS1 = CAN_BS1_6TQ;
   CanHandle.Init.BS2 = CAN_BS2_8TQ;
-  CanHandle.Init.Prescaler = 2;
+  CanHandle.Init.Prescaler = 4; // 500,000 baud
   
   if(HAL_CAN_Init(&CanHandle) != HAL_OK)
   {
@@ -249,26 +180,20 @@ static void CAN_Config(void)
   }
       
   /*##-3- Configure Transmission process #####################################*/
-  CanHandle.pTxMsg->StdId = 0x321;
-  CanHandle.pTxMsg->ExtId = 0x01;
-  CanHandle.pTxMsg->RTR = CAN_RTR_DATA;
-  CanHandle.pTxMsg->IDE = CAN_ID_STD;
-  CanHandle.pTxMsg->DLC = 2;
+  // CanHandle.pTxMsg->StdId = 0x321;
+  // CanHandle.pTxMsg->ExtId = 0x01;
+  // CanHandle.pTxMsg->RTR = CAN_RTR_DATA;
+  // CanHandle.pTxMsg->IDE = CAN_ID_STD;
+  // CanHandle.pTxMsg->DLC = 2;
 }
 
-/**
-  * @brief  Transmission  complete callback in non blocking mode 
-  * @param  CanHandle: pointer to a CAN_HandleTypeDef structure that contains
-  *         the configuration information for the specified CAN.
-  * @retval None
-  */
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
 {
-  if ((CanHandle->pRxMsg->StdId == 0x321)&&(CanHandle->pRxMsg->IDE == CAN_ID_STD) && (CanHandle->pRxMsg->DLC == 2))
-  {
-    LED_Display(CanHandle->pRxMsg->Data[0]);
-    ubKeyNumber = CanHandle->pRxMsg->Data[0];
-  }
+  // if ((CanHandle->pRxMsg->StdId == 0x321)&&(CanHandle->pRxMsg->IDE == CAN_ID_STD) && (CanHandle->pRxMsg->DLC == 2))
+  // {
+  //   // do stuff
+  // }
+  shouldSend = 1;
   
   /* Receive */
   if(HAL_CAN_Receive_IT(CanHandle, CAN_FIFO0) != HAL_OK)
@@ -278,41 +203,6 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* CanHandle)
   }
 }
 
-/**
-  * @brief  Turn ON/OFF the dedicated LED.
-  * @param  Ledstatus: Led number from 0 to 3.
-  * @retval None
-  */
-void LED_Display(uint8_t Ledstatus)
-{
-  /* Turn off all LEDs */
-  BSP_LED_Off(LED1);
-  BSP_LED_Off(LED2);
-  BSP_LED_Off(LED3);
-  BSP_LED_Off(LED4);
-  
-  switch(Ledstatus)
-  {
-    case(1): 
-      BSP_LED_On(LED1);
-      break;
-   
-    case(2): 
-      BSP_LED_On(LED2);
-      break;
- 
-    case(3): 
-      BSP_LED_On(LED3);
-      break;
-
-    case(4): 
-      BSP_LED_On(LED4);
-      break;
-      
-    default:
-      break;
-  }
-}
 
 #ifdef  USE_FULL_ASSERT
 /**
@@ -333,13 +223,3 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
