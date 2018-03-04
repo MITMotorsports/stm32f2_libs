@@ -3,6 +3,7 @@
 #include "main.h"
 
 CAN_HandleTypeDef    CanHandle;
+uint32_t ecode;
 
 /* Private function prototypes -----------------------------------------------*/
 static void CAN_Config(void);
@@ -60,13 +61,13 @@ int main(void)
      HAL_CAN_StateTypeDef output;
      output = HAL_CAN_Transmit(&CanHandle, 10);   
      if (output != HAL_OK) {
-       uint32_t ecode = HAL_CAN_GetError(&CanHandle);
+       ecode = HAL_CAN_GetError(&CanHandle);
        //Error_Handler();
      }
 
      //shouldSend = 0;
 
-      HAL_Delay(1000);
+      HAL_Delay(10);
     // }
   } 
 }
