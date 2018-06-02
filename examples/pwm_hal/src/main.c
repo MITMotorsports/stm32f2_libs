@@ -28,6 +28,7 @@ int main(void) {
   TIM_Init();
 
   while (1) {
+    static uint32_t i = 0;
     // static uint32_t lastt = 0;
 
     // if (HAL_GetTick() - lastt > 1000) {
@@ -36,9 +37,14 @@ int main(void) {
 
     //   lastt = HAL_GetTick();
     // }
+   
+    // For 50% duty cycle, (370*50 - 140) / 100 
+    static uint32_t desired_val = (370*50 - 140) / 100;
+    // If you would like to vary the duty cycle, you will need to find a mapping to the COMPARE bit
+    __HAL_TIM_SET_COMPARE(&TimHandle, TIM_CHANNEL_2, desired_val);
 
-    HAL_Delay(1000);
-    HAL_GPIO_TogglePin(GPIO(LED));
+    //HAL_GPIO_TogglePin(GPIO(LED));
+    HAL_Delay(10);
   }
 }
 
